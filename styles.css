@@ -1,0 +1,133 @@
+.fullsection {
+	width: 100%;
+}
+
+.inputContainer {
+	margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    padding-top: 20px;
+}
+.pickHeaderContainer {
+	margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+}
+
+.inputBox {
+    width: 200px !important;
+    display: inline;
+    float: left;
+}
+
+.clearChampions {
+	width: 50px;
+	display: inline;
+    float: left;
+    margin-right: 3px;
+    background-color: #ffffff;
+}
+
+.headerImage {
+	height: 200px;
+	width: 400px;
+	margin-bottom: -10px;
+}
+
+.clearChampions:hover {
+	 background-color: #dddddd;
+}
+
+.bannedChampion {
+	padding-top:20px;
+}
+
+.center {
+	text-align: center;
+}
+
+.hidden {
+	display: none;
+}
+
+.spacer {
+	height: 50px;
+}
+.spacer2 {
+	height: 25px;
+}
+
+.pickName {
+	display: inline;
+	float: left;
+	width: 40%;
+}
+
+.pickLane {
+	display: inline;
+	float: left;
+	width: 40%;
+}
+
+.potentialPick {
+	height: 25px;
+}
+
+.gradeAPlus{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#80FF80;
+	border-radius:5px;
+}
+.gradeA{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#99FF99;
+	border-radius:5px;
+}
+.gradeB{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#FFFF99;
+	border-radius:5px;
+}
+.gradeC{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#FFC2A3;
+	border-radius:5px;
+}
+.gradeD{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#FFB2B2;
+	border-radius:5px;
+}
+.gradeF{
+	width: 20%;
+	display: inline;
+	float: left;
+	text-align:center;
+	background-color:#E0C2FF;
+	border-radius:5px;
+}
+
+.pickGrade {
+	width: 20%;
+	display: inline;
+	float: left;
+}
+
+.clear{
+	margin: .40px 0 20px;
+}

@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+    <link rel="icon" type="image/png" href="mdr_icon.png">
+    <head>
+        <title>MegaDeathRocket</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="typeaheadjs.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    </head>
+    <body>
+        <div class="spacer">
+            &nbsp;
+        </div>
+        <div class="center">
+            <img src="mdr_header.png" class="headerImage" alt="MegaDeathRocket">
+        </div>
+        <div id="bannedChampion1" class="bannedChampion hidden center">
+
+        </div>
+        <div id="bannedChampion2" class="bannedChampion hidden center">
+
+        </div>
+        <div id="bannedChampion3" class="bannedChampion hidden center">
+
+        </div>
+        <div id="championInput" class="fullsection">
+            <div class="inputContainer">
+                <button id="clearChampions" type="button" class="clearChampions btn btn-lg">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </button>
+                <div class="inputBox">
+                    <input type="text" class="typeahead" placeholder="Banned Champion..." id="addedChampionName"/>
+                </div>
+            </div>
+        </div>
+        <div class="spacer2">
+
+        </div>
+        <!-- <div class="pickHeaderContainer">
+            <div class="pickName">Potential Pick</div>
+            <div class="pickLane">Lane</div>
+            <div class="pickGrade">Confidence</div>
+            <div class="clear"></div>
+        </div> -->
+      
+        <div id="potentialPicks" class="inputContainer">
+
+        </div>
+
+        <div class="spacer">
+            &nbsp;
+        </div>
+
+        <script type="text/javascript" src="championData.js"></script>
+        <script src="jquery-1.11.1.min.js"></script>
+        <script src="notify.min.js"></script>
+        <script src="typeahead.bundle.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        
+        <script>
+             var numChampions = 0;
+             var bannedChampions = new Array();
+             var bannedChampionNames = new Array();
+             var potentialPicks = new Array();
+             var championsObject = JSON.parse(champions);
+
+             var aPlusGrade = 800;
+             var aGrade = 400;
+             var bGrade = 150;
+             var cGrade = 50;
+             var dGrade = 10;
+
+            $(document).ready(function(){
+                $("#addedChampionName").focus();
+                $('#addChampion').click(function(){
+                    updateBannedChampions();
+                    $("#addedChampionName").focus();
+                });
+                $("#addedChampionName").keyup(function(event){
+                    $('.notifyjs-container').trigger( "click" );
+                    if(event.keyCode == 13){
+                        updateBannedChampions();
+                        $("#addedChampionName").focus();
+                    }
+                });
+
+                $('#clearChampions').click(function(){
+                    reset();
+                    $("#addedChampionName").focus();
+                });
+
+                $("#addedChampionName").blur(function() {
+                    $('#addedChampionName').val('');
+                });
+
+                $("#addedChampionName").notify("Enter the champions that the other team is banning.\n\nChampions that they might be banning for will be listed below.", "info", { position:"left" });
+            });
+
+            function updateBannedChampions(){
+                var championName = $('#addedChampionName').val();
+                $('.typeahead').trigger('blur');
+                $('#addedChampionName').val('');
+
+                championName = championName.charAt(0).toUpperCase() + championName.slice(1);
+
+                if (championList.indexOf(championName) > -1 && bannedChampionNames.indexOf(championName) < 0){
+                    switch(numChampions) {
+                        case 0:
+                            numChampions++;
+                            $('#bannedChampion1').html(championName);
+                            $('#bannedChampion1').removeClass('hidden');
+                            bannedChampionNames.push(championName);
+                            addBannedChampion(championName);
+                            break;
+                        case 1:
+                            numChampions++;
+                            $('#bannedChampion2').html(championName);
+                            $('#bannedChampion2').removeClass('hidden');
+                            bannedChampionNames.push(championName);
+                            addBannedChampion(championName);
+                            break;
+                        case 2:
+                            numChampions++;
+                            $('#bannedChampion3').html(championName);
+                            $('#bannedChampion3').removeClass('hidden');
+                            bannedChampionNames.push(championName);
+                            addBannedChampion(championName);
+                            break;
+                    }
+                }
+            }
+
+            function addBannedChampion(championName){
+                var convertedChampionName = championName;
+                if (convertedChampionName == "Cho'Gath") convertedChampionName = "ChoGath";
+                if (convertedChampionName == "Dr. Mundo") convertedChampionName = "DrMundo";
+                if (convertedChampionName == "Jarvan IV") convertedChampionName = "JarvanIV";
+                if (convertedChampionName == "Kha'Zix") convertedChampionName = "KhaZix";
+                if (convertedChampionName == "Kog'Maw") convertedChampionName = "KogMaw";
+                if (convertedChampionName == "Lee Sin") convertedChampionName = "LeeSin";
+                if (convertedChampionName == "Master Yi") convertedChampionName = "MasterYi";
+                if (convertedChampionName == "Miss Fortune") convertedChampionName = "MissFortune";
+                if (convertedChampionName == "Twisted Fate") convertedChampionName = "TwistedFate";
+                if (convertedChampionName == "Xin Zhao") convertedChampionName = "XinZhao";
+                if (convertedChampionName == "Vel'Koz") convertedChampionName = "VelKoz";
+                bannedChampions.push(convertedChampionName);
+                recalculatePotentialPicks();
+            }
+
+            function recalculatePotentialPicks(){
+                potentialPicks = new Array();
+                $('#potentialPicks').html('');
+                bannedChampions.forEach(function(champion) {
+                    championsObject[championListRaw.indexOf(champion)].counters.forEach(function(potentialPick) {
+                        var hasPick = false;
+                        for (var p in potentialPicks) {
+                            if (potentialPick.name == potentialPicks[p].name && potentialPick.lane == potentialPicks[p].lane){
+                                potentialPicks[p].weight = (potentialPick.weight + potentialPicks[p].weight)*2;
+                                hasPick = true;
+                            }
+                        }
+                        if (!hasPick){
+                            potentialPicks.push(potentialPick);
+                        }
+                    });
+                });
+
+                potentialPicks = sortByKey(potentialPicks, 'weight');
+
+                var numPicks = 0;
+
+                $('#potentialPicks').append('<div class="potentialPick">');
+                $('#potentialPicks').append('<div class="pickName">Champion</div>');
+                $('#potentialPicks').append('<div class="pickLane">Lane</div>');
+                $('#potentialPicks').append('<div class="pickGrade">Confidence</div>');
+                $('#potentialPicks').append('<hr/>');
+                $('#potentialPicks').append('</div>');
+
+                potentialPicks.forEach(function(pick){
+                    if (numPicks < 10 && bannedChampionNames.indexOf(pick.name) < 0){
+                        $('#potentialPicks').append('<div class="potentialPick">');
+                        $('#potentialPicks').append('<div class="pickName">'+pick.name+'</div>');
+                        $('#potentialPicks').append('<div class="pickLane">'+pick.lane+'</div>');
+
+                        if (pick.weight > aPlusGrade){
+                            $('#potentialPicks').append('<div class="gradeAPlus">A+</div>');
+                        } else if (pick.weight > aGrade){
+                            $('#potentialPicks').append('<div class="gradeA">A</div>');
+                        } else if (pick.weight > bGrade){
+                            $('#potentialPicks').append('<div class="gradeB">B</div>');
+                        } else if (pick.weight > cGrade){
+                            $('#potentialPicks').append('<div class="gradeC">C</div>');
+                        } else if (pick.weight > dGrade){
+                            $('#potentialPicks').append('<div class="gradeD">D</div>');
+                        } else {
+                            $('#potentialPicks').append('<div class="gradeF">F</div>');
+                        }
+
+                        $('#potentialPicks').append('</div>');
+                        numPicks++;
+                    }
+                });
+            }
+
+            function reset(){
+                numChampions = 0;
+                bannedChampions = new Array();
+                bannedChampionNames = new Array();
+                potentialPicks = new Array();
+                $('#bannedChampion1').html('');
+                $('#bannedChampion2').html('');
+                $('#bannedChampion3').html('');
+                $('#bannedChampion1').addClass('hidden');
+                $('#bannedChampion2').addClass('hidden');
+                $('#bannedChampion3').addClass('hidden');
+                $('#addedChampionName').val('');
+                 $('#potentialPicks').html('');
+            }
+
+            function sortByKey(array, key) {
+                return array.sort(function(a, b) {
+                    var x = a[key]; var y = b[key];
+                    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                });
+            }
+
+            var substringMatcher = function(strs) {
+                return function findMatches(q, cb) {
+                    var matches, substrRegex;
+             
+                    // an array that will be populated with substring matches
+                    matches = [];
+             
+                    // regex used to determine if a string contains the substring `q`
+                    substrRegex = new RegExp(q, 'i');
+             
+                    // iterate through the pool of strings and for any string that
+                    // contains the substring `q`, add it to the `matches` array
+                    $.each(strs, function(i, str) {
+                        if (substrRegex.test(str)) {
+                            // the typeahead jQuery plugin expects suggestions to a
+                            // JavaScript object, refer to typeahead docs for more info
+                            matches.push({ value: str });
+                        }
+                    });
+             
+                    cb(matches);
+                };
+            };
+
+            $('#addedChampionName').typeahead({
+                hint: true,
+                highlight: true,
+                autoselect: "first",
+                minLength: 1
+            },
+            {
+                name: 'championList',
+                displayKey: 'value',
+                source: substringMatcher(championList)
+            });
+        </script>
+        <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56528956-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+    </body>
+</html>
